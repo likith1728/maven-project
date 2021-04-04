@@ -1,28 +1,50 @@
 
-node('master') 
+pipeline
 {
-    stage('ContinuousDownload-Loans') 
+    agent any
+    stages
     {
-       git 'https://github.com/selenium-saikrishna/maven.git'
+        stage('ContinuousDownload')
+        {
+            steps
+            {
+                git 'https://github.com/AnupamaSoma/maven-project.git'
+            }
+        }
+        stage('ContinuousBuild')
+        {
+            steps
+            {
+              sh label: '', script: 'mvn package'
+            }
+                
+        }
+        stage('ContinuousDeployment')
+        {
+            steps
+            {
+                deploy adapters: [tomcat8(credentialsId: 'mycred', path: '', url: 'http://172.31.81.254:8080')], contextPath: 'testapp', war: '**/*.war'
+            }
+            
+        }
+        stage('ContinuousTesting')
+        {
+            steps
+            {
+                git 'https://github.com/AnupamaSoma/FunctionalTesting.git'
+      
+               sh 'java -jar /home/ubuntu/.jenkins/workspace/Declarativepipeline/testing.jar '
+            }
 
+        }
+        stage('ContinuousDelivery')
+        {
+           steps
+           {
+               input message: 'Waiting for Approval from the DM!', submitter: 'naresh'
+               deploy adapters: [tomcat8(credentialsId: 'mycred', path: '', url: 'http://172.31.29.52:8080')], contextPath: 'prodapp', war: '**/*.war'
+           }
+        }
     }
-    stage('ContinuousBuild-Loans') 
-    {
-      sh 'mvn package'
-    }
-    stage('ContinuousDeployment-Loans')
-    {
-        sh 'scp /home/vagrant/.jenkins/workspace/ScriptedPipeline/webapp/target/webapp.war vagrant@10.1.1.5:/var/lib/tomcat7/webapps/loansenv.war'
-    }
-    stage('Continuoustesting-Loans')
-    {
-        git 'https://github.com/selenium-saikrishna/FunctionalTesting.git'
-    }
-    
-    
- 
-    
-    
     
 }
-
