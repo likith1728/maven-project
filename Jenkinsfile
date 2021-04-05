@@ -19,5 +19,9 @@ node {
         sh 'echo deployed to tomcat'
         
     }
+      stage ('email notification')
+     {
+        mail bcc: '', body: 'test', cc: '', from: '', replyTo: '', subject: 'test', to: 'likithadithyadell@gmail.com'
+    }
 }
 
