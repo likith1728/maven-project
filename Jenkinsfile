@@ -21,7 +21,7 @@ node {
     }
       stage ('email notification')
      {
-        mail bcc: '', body: 'test', cc: '', from: '', replyTo: '', subject: 'test', to: 'likithadithyadell@gmail.com'
+        mail bcc: '', body: 'test1', cc: '', from: '', replyTo: '', subject: 'test1', to: 'likithadithyadell@gmail.com'
     }
 }
 
